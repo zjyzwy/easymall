@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="easymall.dao.ProductsDao">
+<!-- 用户登录功能，返回User类对象 -->
+<select id="allcategorys" resultType="easymall.po.Category">
+	select * from category
+</select>
+<select id = "prodlist" resultType="easymall.po.Products" parameterType="map">
+	select * from products where (price between #{minPrice} and #{maxPrice})
+	<if test="name!=null and name!=''">
+		and name like concat('%',#{name},'%')
+	</if>
+	<if test="category!=null and category!=''">
+		and category=#{category}
+	</if>
+</select>
+
+<select id = "oneProduct" parameterType="String" resultType="easymall.po.Products">
+	select * from products where id=#{pid}
+</select>
+
+<select id = "proclass" parameterType="Integer" resultType="easymall.po.Products">
+	select * from products where category=#{category}
+</select>
+<insert id="save" parameterType="easymall.po.Products">
+	insert into products(id,name,price,category,pnum,imgurl,description)
+		values(#{id},#{name},#{price},#{category},#{pnum},#{imgurl},#{description})
+</insert>
+<select id="findByImgurl" parameterType="String" resultType="easymall.po.Products">
+	select * from products where imgurl=#{imgurl}
+</select>
+
+<select id="allprod" resultType="easymall.po.Products">
+	SELECT * from products
+</select>
+
+<delete id="delprod" parameterType="easymall.po.Products">
+	delete from products where id=#{id}
+</delete>
+
+<update id="updatepnum" parameterType="easymall.po.Products">
+	update products set pnum=#{pnum} where id=#{id}
+</update>
+<select id="sold" resultType="easymall.pojo.ShowProducts">
+	select p.imgurl,p.id,p.name,c.name as category,p.price,p.soldnum from products p,category c where p.category=c.id order by soldnum DESC
+</select>
+
+<delete id="delcate" parameterType="String">
+	delete from category where id=#{id}
+</delete>
+
+<insert id="addcate" parameterType="easymall.po.Category" >
+	insert into category(id,name,description) values(null,#{name},#{description})
+</insert>
+<select id="up" parameterType="String" resultType="easymall.po.Category">
+	select * from category where id=#{id}
+</select>
+
+<update id="upcate" parameterType="easymall.po.Category">
+	update category set name=#{name},description=#{description} where id=#{id}
+</update>
+
+<select id="echart" resultType="easymall.pojo.ShowProducts">
+	select p.imgurl,p.id,p.name,c.name as category,p.price,p.soldnum from products p,category c where p.category=c.id and p.soldnum>=1000
+</select>
+
+<update id="upprod" parameterType="easymall.po.Products">
+	update products set name=#{name},category=#{category},description=#{description} where id=#{id}
+</update>
+
+</mapper>
